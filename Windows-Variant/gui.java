@@ -44,14 +44,14 @@ class gui{
         
         String ipAddress = "" + localhost.getHostAddress();
         byte[] mac = null;
-        InetAddress add = InetAddress.getByName("Juice");
-        NetworkInterface networky = NetworkInterface.getByInetAddress(add);
-        //mac = networky.getHardwareAddress();
+        
+        NetworkInterface networky = NetworkInterface.getByInetAddress(localhost);
+        mac = networky.getHardwareAddress();
 		
 		StringBuilder sb = new StringBuilder();
-        //for (int i = 0; i < mac.length; i++) {
-           //sb.append(String.format("%02X%s", mac[i], (i < mac.length - 1) ? "-" : ""));		
-        //}
+        for (int i = 0; i < mac.length; i++) {
+           sb.append(String.format("%02X%s", mac[i], (i < mac.length - 1) ? "-" : ""));		
+        }
       
         JPanel panel = new JPanel(); // the panel is not visible in output
         JPanel panel1 = new JPanel();
@@ -59,12 +59,12 @@ class gui{
         JButton MAC = new JButton("MAC Address");
         JLabel address = new JLabel("Public IP Address is: " + systemipaddress);
         JLabel address1 = new JLabel("System IP Address is: " + localhost.getHostAddress());
-        //JLabel address2 = new JLabel("Current MAC Address is: " + sb.toString());
+        JLabel address2 = new JLabel("Current MAC Address is: " + sb.toString());
         //panel.add(IP);
         //panel.add(MAC);
         panel1.add(address);
         panel1.add(address1);
-        //panel1.add(address2);
+        panel1.add(address2);
         
         //Adding Components to the frame.
         frame.getContentPane().add(BorderLayout.NORTH, panel);
