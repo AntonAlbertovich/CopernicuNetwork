@@ -97,10 +97,14 @@ class gui{
             public void actionPerformed(ActionEvent e) {
             	
 	            	Multithread a = new Multithread();
-	            	a.search();
+	            	List<String> logged = new LinkedList<>();
+			
+			logged = a.search();
 			String somresult = "";
 			somresult = a.return_result();
-			System.out.printf(somresult);
+			System.out.print("AND DONE!");
+			
+			System.out.print(logged);
 					
 			//JLabel picLabel = new JLabel(new ImageIcon("C:\\Users\\sarah\\OneDrive\\Pictures\\memes\\sat.png"));
             		JLabel picLabel = new JLabel(new ImageIcon("sat.png"));
@@ -242,11 +246,12 @@ class Multithread {
 	}
 
 
-    public void search(){  
+    public List<String> search(){  
     	String ip = address();
     	String[] nums = ip.split("\\.");
 	int cores = Runtime.getRuntime().availableProcessors();
 	Multithreading_ping[] randomNumberTasks = new Multithreading_ping[cores+1];
+	List<String> result_data = new LinkedList<>();
 
 	try {
                 Enumeration<NetworkInterface> nets = NetworkInterface.getNetworkInterfaces();
@@ -292,18 +297,26 @@ class Multithread {
 	    }
 
 	    for (int i = 1; i < cores+1; i++){
-			try
-			{ 
+		    int aa = 0;
+
+		    aa = randomNumberTasks[i].is_done();
+		    while(aa != 1){
+		    	try
+			{
+				
 			TimeUnit.SECONDS.sleep(5);
 			}
 			catch(InterruptedException e){
 				System.out.println("Caught in main."); 
 			}
+			aa = randomNumberTasks[i].is_done();
+		    }
 				
 		List<String> xx = new LinkedList<>();
 		xx = randomNumberTasks[i].return_deep_result();
-		System.out.print(xx);
+		result_data.addAll(xx);
 	    }
+	return result_data;
 	    
     }
     public String return_result(){
@@ -331,6 +344,7 @@ class Multithreading_ping implements Runnable {
 		
 		}	
 	List<String> logged = new LinkedList<>();
+	int complete_flag = 0;
 	public void run() { 
 	
 	try{
@@ -426,7 +440,8 @@ class Multithreading_ping implements Runnable {
 				
 				
 				//}
-			//} 
+			//}
+	complete_flag = 1; 
 				
         } 
         catch (Exception e){ 
@@ -438,6 +453,12 @@ class Multithreading_ping implements Runnable {
 
         // Wake up threads blocked on the get() method 
     
+
+    }
+
+    public int is_done(){
+
+	    return complete_flag;
 
     }
 
