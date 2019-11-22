@@ -97,7 +97,7 @@ class gui{
             public void actionPerformed(ActionEvent e) {
             	
 	            	Multithread a = new Multithread();
-	            	List<String> logged = new LinkedList<>();
+	            	List<List<String>> logged = new LinkedList<>();
 			
 			logged = a.search();
 			String somresult = "";
@@ -246,12 +246,12 @@ class Multithread {
 	}
 
 
-    public List<String> search(){  
+    public List<List<String>> search(){  
     	String ip = address();
     	String[] nums = ip.split("\\.");
 	int cores = Runtime.getRuntime().availableProcessors();
 	Multithreading_ping[] randomNumberTasks = new Multithreading_ping[cores+1];
-	List<String> result_data = new LinkedList<>();
+	List<List<String>> result_data = new LinkedList<>();
 
 	try {
                 Enumeration<NetworkInterface> nets = NetworkInterface.getNetworkInterfaces();
@@ -312,7 +312,7 @@ class Multithread {
 			aa = randomNumberTasks[i].is_done();
 		    }
 				
-		List<String> xx = new LinkedList<>();
+		List<List<String>> xx = new LinkedList<>();
 		xx = randomNumberTasks[i].return_deep_result();
 		result_data.addAll(xx);
 	    }
@@ -343,7 +343,7 @@ class Multithreading_ping implements Runnable {
 		b_var = bbb;
 		
 		}	
-	List<String> logged = new LinkedList<>();
+	List<List<String>> logged = new LinkedList<>();
 	int complete_flag = 0;
 	public void run() { 
 	
@@ -355,7 +355,7 @@ class Multithreading_ping implements Runnable {
 			//for(int b=b_var;b<=255;b++){
 				for(int c=1;c<=1;c++){
 					boolean valid_range = false;
-					for(int d=start_var;d<=150;d = d+ inc_var){
+					for(int d=start_var;d<=255;d = d+ inc_var){
 
 						String s_part1 = a_var +""; //Integer.toString(a);
 						String s_part2 = b_var +"";//Integer.toString(b);
@@ -373,8 +373,9 @@ class Multithreading_ping implements Runnable {
 							//if (p.exitValue() == 1){
 							InetAddress inet = InetAddress.getByName(ipAddress);
 							//System.out.println("Sending Ping Request to " + ipAddress);
-							if (inet.isReachable(50)) {
+							if (inet.isReachable(5000)) {
 								valid_range = true;
+								List<String> sub_log = new LinkedList<>();
 								//String this_ip = s_part1 +"."+ s_part2+"."+s_part3+"."+s_part4;
 								//InetAddress host = InetAddress.getByName(this_ip);
 								
@@ -385,16 +386,24 @@ class Multithreading_ping implements Runnable {
 
 								System.out.println ("Found: " + s_part1 +"." +s_part2+"."+s_part3+"."+ s_part4);
 								
-								logged.add(s_part1 +"." +s_part2+"."+s_part3+"."+ s_part4);
-								//for (int port = 1; port <= 65535; port++) {
-								//try{
-									//Socket socket = new Socket();
-									//socket.connect(new InetSocketAddress(s_part1 +"." +s_part2+"."+s_part3+"."+ s_part4, port), 1000);
-									//socket.close();
-									//System.out.println("Port " + port + " is open on "+ s_part1 +"." +s_part2+"."+s_part3+"."+ s_part4 + " on Host Name: " + hostname);
-								//}catch (Exception ex) {
-								//}
-								//}
+								sub_log.add(s_part1 +"." +s_part2+"."+s_part3+"."+ s_part4);
+								
+								for (int port = 1; port <= 15535; port++) {
+								try{
+									Socket socket = new Socket();
+									socket.connect(new InetSocketAddress(s_part1 +"." +s_part2+"."+s_part3+"."+ s_part4, port), 1000);
+									socket.close();
+									System.out.println("Port " + port + " is open on "+ s_part1 +"." +s_part2+"."+s_part3+"."+ s_part4 + " on Host Name: " + hostname);
+									String a_port = "";
+									a_port = Integer.toString(port);
+									sub_log.add(a_port);
+									
+
+								}catch (Exception ex) {
+								}
+
+								}
+								logged.add(sub_log);
 
 							}
 							
@@ -449,7 +458,6 @@ class Multithreading_ping implements Runnable {
 	}
 
 	
-                result = logged;
 
         // Wake up threads blocked on the get() method 
     
@@ -462,7 +470,7 @@ class Multithreading_ping implements Runnable {
 
     }
 
-    public List<String> return_deep_result(){	
+    public List<List<String>> return_deep_result(){	
 	int size = logged.size();
 
 
