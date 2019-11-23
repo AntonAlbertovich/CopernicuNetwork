@@ -84,6 +84,7 @@ class gui{
         JPanel paneltop = new JPanel();
         JButton FIPS = new JButton("Focused IP Search");
         JButton WIPS = new JButton("Wide IP Search");
+        JButton WDOG = new JButton("Sweep and WatchDog Mode");
         JButton FP = new JButton("Focused IP Search and Port Scan");
         JButton WP = new JButton("Wide IP Search and Port Scan");
         JLabel search = new JLabel("Search Complete");
@@ -114,14 +115,12 @@ class gui{
 			int focused_sweep = 1;
 			
 			// If set to 1 then a narrow sweep will be conducted, searching the local IP addresses only directly neighboring the host machine's local address. 
-			
 			// Example: If the host machine is at address 192.168.1.25 then a sweep will be conducted from 192.168.1.1 to 192.168.255.255. 
 			// Intended for contiguous class C networks. 
 
 			// If set to 0 then a full sweep will be conducted, searching all addresses on a network. 
 			// Example: If the host's machine is on 10.170.1.1 then a sweep will be conducted from 10.1.1.1 to 10.255.255.255. 
-			
-			// Intended for single class A networks. 
+			// Intended for sinle class A networks. 
 
 			
 
@@ -141,16 +140,56 @@ class gui{
 	            	frame2.getContentPane().add(BorderLayout.CENTER, panel2);
 	            	frame2.setVisible(true);
 	            	
+	    }
+        });
 
-				
-            	//try {
-            		
-					//runProcess("java -cp src src\\Multithread.java");
+        WDOG.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+            	
+	            	Multithread a = new Multithread();
+	            	List<List<String>> logged = new LinkedList<>();
+			
+
+			int air_gap_flag = 1;
+			
+			// If set to 1 this variable will force a check in with the internet to ensure that the host machine is connected to the internet.
+			// Set to 0 if the host machine is not connected to the internet. 
+
+			int port_scan_flag = 1;
+
+			// If set to 1 then every discoverd client on the host's network will have it's porst scanned. This will significantly increase run time.
+			// If set to 0 then ports will not be scanned. 
+
+			int focused_sweep = 1;
+			
+			// If set to 1 then a narrow sweep will be conducted, searching the local IP addresses only directly neighboring the host machine's local address. 
+			// Example: If the host machine is at address 192.168.1.25 then a sweep will be conducted from 192.168.1.1 to 192.168.255.255. 
+			// Intended for contiguous class C networks. 
+
+			// If set to 0 then a full sweep will be conducted, searching all addresses on a network. 
+			// Example: If the host's machine is on 10.170.1.1 then a sweep will be conducted from 10.1.1.1 to 10.255.255.255. 
+			// Intended for sinle class A networks. 
+
+			
+
+			logged = a.search(air_gap_flag, port_scan_flag, focused_sweep);
+			
+
+			String somresult = "";
+			somresult = a.return_result();
+			System.out.print("AND DONE!");
+			
+			System.out.print(logged);
 					
-				//} catch (Exception e1) {
-					// TODO Auto-generated catch block
-					//e1.printStackTrace();
-				//}
+			//JLabel picLabel = new JLabel(new ImageIcon("C:\\Users\\sarah\\OneDrive\\Pictures\\memes\\sat.png"));
+            		JLabel picLabel = new JLabel(new ImageIcon("sat.png"));
+					panel2.add(picLabel);
+					frame2.getContentPane().add(BorderLayout.NORTH, paneltop);
+	            	frame2.getContentPane().add(BorderLayout.CENTER, panel2);
+	            	frame2.setVisible(true);
+	            	
 	    }
         });
         
@@ -298,18 +337,10 @@ class Multithread {
 	
 	int first = Integer.parseInt(nums[0]);
     	int second = Integer.parseInt(nums[1]);
-	int net_sweep = sweep_flag;
-	
-
-
-
 	    // The cores are counted here
-	    
-
-	    
 	    for (int i=1; i<cores+1; i++){
 		    //Here each interation of the for loop opens up a new thread
-		    randomNumberTasks[i] = new Multithreading_ping(first, second, i, cores, sweep_flag);
+		    randomNumberTasks[i] = new Multithreading_ping(first, second, i, cores, port_scan_flag, sweep_flag);
 		    Thread t = new Thread(randomNumberTasks[i]);
 		    t.start();
  
@@ -351,13 +382,8 @@ class Multithread {
 				System.out.print(network_health);	
 				}			    
 			    try{
-
-			
-				
-
-			
-			TimeUnit.SECONDS.sleep(5);
-			}
+				TimeUnit.SECONDS.sleep(5);
+				}
 			catch(InterruptedException e){
 				System.out.println("Caught in main."); 
 			}
@@ -384,11 +410,10 @@ class Multithreading_ping implements Runnable {
 	private int a_var;
 	private int b_var;
 	private int scan_flag;
-	private int sweep_flag;
-
+	private int network_flag;
 	private String ip;
 		
-    	public Multithreading_ping(int aaa, int bbb, int xxx, int yyy, int port_scan_flag, int network_sweep_flag){
+    	public Multithreading_ping(int aaa, int bbb, int xxx, int yyy, int port_scan_flag, int sweep_flag){
 		
 		// Here the inputs for the ping are managed
     	 	
@@ -397,154 +422,70 @@ class Multithreading_ping implements Runnable {
 		a_var = aaa;
 		b_var = bbb;
 		scan_flag = port_scan_flag;
-		sweep_flag = network_sweep_flag;
-
+		network_flag = sweep_flag; 
+		
 		}	
 	List<List<String>> logged = new LinkedList<>();
-	public void run() {
-		if(sweep_flag == 1){
+	int complete_flag = 0;
+	public void run() { 
+
+		if (network_flag == 1){	
 			try{
 				String s;
 
 				String found = "Adresses discovered: \n";
-				//for(int a=a_var;a<=255;a++){
-					//for(int b=b_var;b<=255;b++){
-						for(int c=1;c<=1;c++){
-							boolean valid_range = false;
-							for(int d=start_var;d<=255;d = d+ inc_var){
+				for(int c=1;c<=1;c++){
+					for(int d=start_var;d<=255;d = d+ inc_var){
 
-								String s_part1 = a_var +""; //Integer.toString(a);
-								String s_part2 = b_var +"";//Integer.toString(b);
-								String s_part3 = Integer.toString(c);
-								String s_part4 = Integer.toString(d);
+						String s_part1 = a_var +""; //Integer.toString(a);
+						String s_part2 = b_var +"";
+						String s_part3 = Integer.toString(c);
+						String s_part4 = Integer.toString(d);
 
-								String ipAddress = s_part1 +"."+ s_part2+"."+s_part3+"."+s_part4;
+						String ipAddress = s_part1 +"."+ s_part2+"."+s_part3+"."+s_part4;
+						
+						try {
+							InetAddress inet = InetAddress.getByName(ipAddress);
+							if (inet.isReachable(5000)) {
+								List<String> sub_log = new LinkedList<>();
 								
-								try {
-									InetAddress inet = InetAddress.getByName(ipAddress);
-									if (inet.isReachable(5000)) {
-										valid_range = true;
-										List<String> sub_log = new LinkedList<>();
+								String hostname = inet.getHostName();
+
+								// If the address is found to be recieving a ping the here a print statement will show the address pinged
+								
+
+								System.out.println("Found: " + s_part1 +"." +s_part2+"."+s_part3+"."+ s_part4);
+								
+								sub_log.add(s_part1 +"." +s_part2+"."+s_part3+"."+ s_part4);
+								if (scan_flag == 1){
+									for (int port = 1; port <= 15535; port++) {
+									try{
+										Socket socket = new Socket();
+										socket.connect(new InetSocketAddress(s_part1 +"." +s_part2+"."+s_part3+"."+ s_part4, port), 1000);
+										socket.close();
+										System.out.println("Port " + port + " is open on "+ s_part1 +"." +s_part2+"."+s_part3+"."+ s_part4 + " on Host Name: " + hostname);
+										String a_port = "";
+										a_port = Integer.toString(port);
+										sub_log.add(a_port);
 										
-										String hostname = inet.getHostName();
 
-										// If the address is found to be recieving a ping the here a print statement will show the address pinged
+									}catch (Exception ex) {
 										
-
-										System.out.println("Found: " + s_part1 +"." +s_part2+"."+s_part3+"."+ s_part4);
-										
-										sub_log.add(s_part1 +"." +s_part2+"."+s_part3+"."+ s_part4);
-										if (scan_flag == 1){
-											for (int port = 1; port <= 15535; port++) {
-											try{
-												Socket socket = new Socket();
-												socket.connect(new InetSocketAddress(s_part1 +"." +s_part2+"."+s_part3+"."+ s_part4, port), 1000);
-												socket.close();
-												System.out.println("Port " + port + " is open on "+ s_part1 +"." +s_part2+"."+s_part3+"."+ s_part4 + " on Host Name: " + hostname);
-												String a_port = "";
-												a_port = Integer.toString(port);
-												sub_log.add(a_port);
-												
-
-											}catch (Exception ex) {
-												
-												}
-
-											}
 										}
-										logged.add(sub_log);
 
 									}
-									
-									
-
-									} catch (Exception e) {}
-
-								
 								}
-							
+								logged.add(sub_log);
 
 							}
-
-						
-						
-						//}
-					//}
-			complete_flag = 1; 
-						
-			} 
-			catch (Exception e){ 
-			    // Throwing an exception 	
-			}
-
-		}else{
-		
-			try{
-				String s;
-
-				String found = "Adresses discovered: \n";
-				for(int a=a_var;a<=255;a++){
-					for(int b=b_var;b<=255;b++){
-						for(int c=1;c<=1;c++){
-							boolean valid_range = false;
-							for(int d=start_var;d<=255;d = d+ inc_var){
-
-								String s_part1 = a_var +""; //Integer.toString(a);
-								String s_part2 = b_var +"";//Integer.toString(b);
-								String s_part3 = Integer.toString(c);
-								String s_part4 = Integer.toString(d);
-
-								String ipAddress = s_part1 +"."+ s_part2+"."+s_part3+"."+s_part4;
-								
-								try {
-									InetAddress inet = InetAddress.getByName(ipAddress);
-									if (inet.isReachable(5000)) {
-										valid_range = true;
-										List<String> sub_log = new LinkedList<>();
-										
-										String hostname = inet.getHostName();
-
-										// If the address is found to be recieving a ping the here a print statement will show the address pinged
-										
-
-										System.out.println("Found: " + s_part1 +"." +s_part2+"."+s_part3+"."+ s_part4);
-										
-										sub_log.add(s_part1 +"." +s_part2+"."+s_part3+"."+ s_part4);
-										if (scan_flag == 1){
-											for (int port = 1; port <= 15535; port++) {
-											try{
-												Socket socket = new Socket();
-												socket.connect(new InetSocketAddress(s_part1 +"." +s_part2+"."+s_part3+"."+ s_part4, port), 1000);
-												socket.close();
-												System.out.println("Port " + port + " is open on "+ s_part1 +"." +s_part2+"."+s_part3+"."+ s_part4 + " on Host Name: " + hostname);
-												String a_port = "";
-												a_port = Integer.toString(port);
-												sub_log.add(a_port);
-												
-
-											}catch (Exception ex) {
-												
-												}
-
-											}
-										}
-										logged.add(sub_log);
-
-									}
-									
-									
-
-									} catch (Exception e) {}
-
-								
-								}
+							
 							
 
-							}
+							} catch (Exception e) {}
 
-						
 						
 						}
+					
 					}
 			complete_flag = 1; 
 						
@@ -552,12 +493,76 @@ class Multithreading_ping implements Runnable {
 			catch (Exception e){ 
 			    // Throwing an exception 	
 			}
+		
+		}else{
+			try{
+				String s;
 
+				String found = "Adresses discovered: \n";
+				//for(int a=a_var;a<=255;a++){
+					for(int b=b_var;b<=255;b++){
+						for(int c=1;c<=1;c++){
+							boolean valid_range = false;
+							for(int d=start_var;d<=255;d = d+ inc_var){
+
+								String s_part1 = a_var +""; //Integer.toString(a);
+								String s_part2 = Integer.toString(b);
+								String s_part3 = Integer.toString(c);
+								String s_part4 = Integer.toString(d);
+
+								String ipAddress = s_part1 +"."+ s_part2+"."+s_part3+"."+s_part4;
+								
+								try {
+									InetAddress inet = InetAddress.getByName(ipAddress);
+									if (inet.isReachable(5000)) {
+										valid_range = true;
+										List<String> sub_log = new LinkedList<>();
+										
+										String hostname = inet.getHostName();
+
+										// If the address is found to be recieving a ping the here a print statement will show the address pinged
+										System.out.println("Found: " + s_part1 +"." +s_part2+"."+s_part3+"."+ s_part4);
+										
+										sub_log.add(s_part1 +"." +s_part2+"."+s_part3+"."+ s_part4);
+										if (scan_flag == 1){
+											for (int port = 1; port <= 15535; port++) {
+											try{
+												Socket socket = new Socket();
+												socket.connect(new InetSocketAddress(s_part1 +"." +s_part2+"."+s_part3+"."+ s_part4, port), 1000);
+												socket.close();
+												System.out.println("Port " + port + " is open on "+ s_part1 +"." +s_part2+"."+s_part3+"."+ s_part4 + " on Host Name: " + hostname);
+												String a_port = "";
+												a_port = Integer.toString(port);
+												sub_log.add(a_port);
+												
+
+											}catch (Exception ex) {
+												
+												}
+
+											}
+										}
+										logged.add(sub_log);
+
+									}
+									} catch (Exception e) {}
+								}
+							}
+						}
+					//}
+			complete_flag = 1; 
+						
+			} 
+			catch (Exception e){ 
+			    // Throwing an exception 	
+			}
 		}
+    }
 
-	}
     public int is_done(){
+
 	    return complete_flag;
+
     }
 
     public List<List<String>> return_deep_result(){	
