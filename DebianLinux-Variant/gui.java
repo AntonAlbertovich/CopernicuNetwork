@@ -1,4 +1,5 @@
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -18,16 +19,16 @@ import java.util.concurrent.TimeUnit;
 
 
 class gui{
-	static List<String> logged = new LinkedList<>();
-	private static void runProcess(String command) throws Exception {
+        static List<String> logged = new LinkedList<>();
+        private static void runProcess(String command) throws Exception {
         Process pro = Runtime.getRuntime().exec(command);
         printLines(command + " stdout:", pro.getInputStream());
         printLines(command + " stderr:", pro.getErrorStream());
         pro.waitFor();
         System.out.println(command + " exitValue() " + pro.exitValue());
       }
-	
-	private static void printLines(String cmd, InputStream ins) throws Exception {
+
+        private static void printLines(String cmd, InputStream ins) throws Exception {
         String line = null;
         BufferedReader in = new BufferedReader(
             new InputStreamReader(ins));
@@ -36,229 +37,162 @@ class gui{
             logged.add(cmd + " " + line);
         }
       }
-	
+
     public static void main(String args[])throws Exception {
-    	//Creating the Frame
+        //Creating the Frame
         JFrame frame = new JFrame("CopernicuNetwork");
         JFrame frame2 = new JFrame("Ping Search");
         frame2.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         frame2.setSize(500, 500);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(800, 650);
-     // Returns the instance of InetAddress containing 
-        // local host name and address 
-        InetAddress localhost = InetAddress.getLocalHost(); 
-        // Find public IP address 
-        String systemipaddress = ""; 
+        frame.setSize(700, 800);
+        // Returns the instance of InetAddress containing
+        // local host name and address
+        InetAddress localhost = InetAddress.getLocalHost();
+        // Find public IP address
+        String systemipaddress = "";
         try
-        { 
-            URL url_name = new URL("http://bot.whatismyipaddress.com"); 
-  
-            BufferedReader sc = 
-            new BufferedReader(new InputStreamReader(url_name.openStream())); 
-  
+        {
+            URL url_name = new URL("http://bot.whatismyipaddress.com");
+
+            BufferedReader sc =
+            new BufferedReader(new InputStreamReader(url_name.openStream()));
+
             // reads system IPAddress 
-            
-	    systemipaddress = sc.readLine().trim(); 
-        } 
-        catch (Exception e) 
-        
-        { 
-            systemipaddress = "Cannot Execute Properly"; 
+            systemipaddress = sc.readLine().trim();
         }
-        System.out.print(systemipaddress);
-        //String ipAddress = "" + localhost.getHostAddress();
-        byte[] mac = null;
-        
+        catch (Exception e)
+
+        {
+            systemipaddress = "Cannot Execute Properly";
+        }
+
         NetworkInterface networky = NetworkInterface.getByInetAddress(localhost);
-        //mac = networky.getHardwareAddress(localhost);
-		
-	//StringBuilder sb = new StringBuilder();
-        //for (int i = 0; i < mac.length; i++) {
-        //   sb.append(String.format("%02X%s", mac[i], (i < mac.length - 1) ? "-" : ""));		
-        //}
-      
-        JPanel panel = new JPanel(); // the panel is not visible in output
+
+        //BUTTON PANEL TIME!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        JPanel panel = new JPanel();
+        JPanel panel0 = new JPanel();
         JPanel panel1 = new JPanel();
         JPanel panel2 = new JPanel();
         JPanel paneltop = new JPanel();
-        JButton FIPS = new JButton("Focused IP Search");
-        JButton WIPS = new JButton("Wide IP Search");
-        JButton WDOG = new JButton("Sweep and WatchDog Mode");
-        JButton FP = new JButton("Focused IP Search and Port Scan");
-        JButton WP = new JButton("Wide IP Search and Port Scan");
+        JLabel range = new JLabel("Search range: ");
+        JRadioButton narrow = new JRadioButton("Narrow");
+        JRadioButton wide = new JRadioButton("Wide");
+        ButtonGroup sweep = new ButtonGroup();
+        sweep.add(narrow);
+        sweep.add(wide);
+        JLabel scan = new JLabel("Port Scanning: ");
+        JRadioButton on = new JRadioButton("On");
+        JRadioButton off = new JRadioButton("Off");
+        ButtonGroup port = new ButtonGroup();
+        port.add(on);
+        port.add(off);
+        JLabel air = new JLabel("Air gap: ");
+        JRadioButton yes = new JRadioButton("On");
+        JRadioButton no = new JRadioButton("Off");
+        ButtonGroup gap = new ButtonGroup();
+        gap.add(no);
+        gap.add(yes);
+        JButton GoTime = new JButton("Search");
         JLabel search = new JLabel("Search Complete");
         search.setFont(new Font("Serif", Font.PLAIN, 36));
-        BufferedImage myPicture = ImageIO.read(new File("tel.png"));
-        JLabel picLabel = new JLabel(new ImageIcon(myPicture));
-        
+        JLabel picLabel = new JLabel(new ImageIcon("tel.png"));
+        final int air_gap_flag = 1;
+        final int port_scan_flag = 1;
+        final int focused_sweep = 1;
+
+
+
         //FIPS action
-        FIPS.addActionListener(new ActionListener() {
+        GoTime.addActionListener(new ActionListener() {
+
 
             @Override
             public void actionPerformed(ActionEvent e) {
-            	
-	            	Multithread a = new Multithread();
-	            	List<List<String>> logged = new LinkedList<>();
-			
 
-			int air_gap_flag = 1;
-			
-			// If set to 1 this variable will force a check in with the internet to ensure that the host machine is connected to the internet.
-			// Set to 0 if the host machine is not connected to the internet. 
+                Multithread a = new Multithread();
+                List<List<String>> logged = new LinkedList<>();
 
-			int port_scan_flag = 1;
 
-			// If set to 1 then every discoverd client on the host's network will have it's porst scanned. This will significantly increase run time.
-			// If set to 0 then ports will not be scanned. 
+                //air_gap_flag
 
-			int focused_sweep = 1;
-			
-			// If set to 1 then a narrow sweep will be conducted, searching the local IP addresses only directly neighboring the host machine's local address. 
-			// Example: If the host machine is at address 192.168.1.25 then a sweep will be conducted from 192.168.1.1 to 192.168.255.255. 
-			// Intended for contiguous class C networks. 
+                // If set to 1 this variable will force a check in with the internet to ensure that the host machine is connected to the internet.
+                // Set to 0 if the host machine is not connected to the internet.
 
-			// If set to 0 then a full sweep will be conducted, searching all addresses on a network. 
-			// Example: If the host's machine is on 10.170.1.1 then a sweep will be conducted from 10.1.1.1 to 10.255.255.255. 
-			// Intended for sinle class A networks. 
+                //port_scan_flag
 
-			
+                // If set to 1 then every discoverd client on the host's network will have it's porst scanned. This will significantly increase run time.
+                // If set to 0 then ports will not be scanned.
 
-			logged = a.search(air_gap_flag, port_scan_flag, focused_sweep);
-			
+                //focused_sweep
 
-			String somresult = "";
-			somresult = a.return_result();
-			System.out.print("AND DONE!");
-			
-			System.out.print(logged);
-					
-			//JLabel picLabel = new JLabel(new ImageIcon("C:\\Users\\sarah\\OneDrive\\Pictures\\memes\\sat.png"));
-            		JLabel picLabel = new JLabel(new ImageIcon("sat.png"));
-					panel2.add(picLabel);
-					frame2.getContentPane().add(BorderLayout.NORTH, paneltop);
-	            	frame2.getContentPane().add(BorderLayout.CENTER, panel2);
-	            	frame2.setVisible(true);
-	            	
-	    }
-        });
+                // If set to 1 then a narrow sweep will be conducted, searching the local IP addresses only directly neighboring the host machine's local address.
 
-        WDOG.addActionListener(new ActionListener() {
+                // Example: If the host machine is at address 192.168.1.25 then a sweep will be conducted from 192.168.1.1 to 192.168.255.255.
+                // Intended for contiguous class C networks.
 
-            @Override
-            public void actionPerformed(ActionEvent e) {
-            	
-	            	Multithread a = new Multithread();
-	            	List<List<String>> logged = new LinkedList<>();
-			
+                // If set to 0 then a full sweep will be conducted, searching all addresses on a network.
+                // Example: If the host's machine is on 10.170.1.1 then a sweep will be conducted from 10.1.1.1 to 10.255.255.255.
 
-			int air_gap_flag = 1;
-			
-			// If set to 1 this variable will force a check in with the internet to ensure that the host machine is connected to the internet.
-			// Set to 0 if the host machine is not connected to the internet. 
+                // Intended for single class A networks.
 
-			int port_scan_flag = 1;
 
-			// If set to 1 then every discoverd client on the host's network will have it's porst scanned. This will significantly increase run time.
-			// If set to 0 then ports will not be scanned. 
 
-			int focused_sweep = 1;
-			
-			// If set to 1 then a narrow sweep will be conducted, searching the local IP addresses only directly neighboring the host machine's local address. 
-			// Example: If the host machine is at address 192.168.1.25 then a sweep will be conducted from 192.168.1.1 to 192.168.255.255. 
-			// Intended for contiguous class C networks. 
+                logged = a.search(air_gap_flag, port_scan_flag, focused_sweep);
 
-			// If set to 0 then a full sweep will be conducted, searching all addresses on a network. 
-			// Example: If the host's machine is on 10.170.1.1 then a sweep will be conducted from 10.1.1.1 to 10.255.255.255. 
-			// Intended for sinle class A networks. 
 
-			
+                String somresult = "";
+                somresult = a.return_result();
+                System.out.print("AND DONE!");
 
-			logged = a.search(air_gap_flag, port_scan_flag, focused_sweep);
-			
+                System.out.print(logged);
 
-			String somresult = "";
-			somresult = a.return_result();
-			System.out.print("AND DONE!");
-			
-			System.out.print(logged);
-					
-			//JLabel picLabel = new JLabel(new ImageIcon("C:\\Users\\sarah\\OneDrive\\Pictures\\memes\\sat.png"));
-            		JLabel picLabel = new JLabel(new ImageIcon("sat.png"));
-					panel2.add(picLabel);
-					frame2.getContentPane().add(BorderLayout.NORTH, paneltop);
-	            	frame2.getContentPane().add(BorderLayout.CENTER, panel2);
-	            	frame2.setVisible(true);
-	            	
-	    }
-        });
-        
-        //WIPS action
-        WIPS.addActionListener(new ActionListener() {
 
-            @Override
-            public void actionPerformed(ActionEvent e) {
-            	
-            		JOptionPane.showMessageDialog(null, "This function takes several hours.", "Warning", JOptionPane.INFORMATION_MESSAGE);	
-            		JLabel imgLabel = new JLabel(new ImageIcon("sat.png"));
-    					
-    					panel2.add(imgLabel);
-    					frame2.getContentPane().add(BorderLayout.NORTH, paneltop);
-    	            	frame2.getContentPane().add(BorderLayout.CENTER, panel2);
-    	            	frame2.setVisible(true);
-					
+                        JLabel picLabel = new JLabel(new ImageIcon("sat.png"));
+                                panel2.add(picLabel);
+                                frame2.getContentPane().add(BorderLayout.NORTH, paneltop);
+                frame2.getContentPane().add(BorderLayout.CENTER, panel2);
+                frame2.setVisible(true);
             }
         });
-        
-        //WP action 
-        WP.addActionListener(new ActionListener() {
 
-            @Override
-            public void actionPerformed(ActionEvent e) {
-            	//try {
-            		JOptionPane.showMessageDialog(null, "This function takes several hours.", "Warning", JOptionPane.INFORMATION_MESSAGE);
-					//BufferedImage pic = ImageIO.read(new File("C:\\Users\\sarah\\OneDrive\\Pictures\\memes\\sat.png"));
-					//JLabel picLabel = new JLabel(new ImageIcon(pic));
-					//frame2.add(picLabel);
-	            	//frame2.setVisible(true);
-	            	//frame2.getContentPane().add(BorderLayout.NORTH, panel);
-	            	//frame2.getContentPane().add(BorderLayout.CENTER, panel2);
-				//} catch (IOException e2) {
-					// TODO Auto-generated catch block
-					//e2.printStackTrace();
-				//}
-            	try {
-            		
-					
-					
-				} catch (Exception e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
-            }
-        });
-        
         //IP address labels
-        JLabel address = new JLabel("Public IP Address is: " + systemipaddress +"                                 ");
-        JLabel address1 = new JLabel("System IP Address is: " + localhost.getHostAddress()+"                                 ");
-        //JLabel address2 = new JLabel("Current MAC Address is: " + sb.toString()+"                                 ");
-       
-        //panel.add(MAC);
-        panel1.add(address);
-        panel1.add(address1);
-        //panel1.add(address2);
-        panel1.add(picLabel);
-        panel.add(FIPS);
-        panel.add(WIPS);
-        panel.add(FP);
-        panel.add(WP);
+        JLabel address = new JLabel("Public IP Address is: " + systemipaddress);
+        address.setAlignmentX(JLabel.CENTER_ALIGNMENT);
+        JLabel address1 = new JLabel("System IP Address is: " + localhost.getHostAddress());
+        //FORMATTING FORMATTING FORMATTING FORMATTING FORMATTING FORMATTING 
+        address1.setAlignmentX(JLabel.CENTER_ALIGNMENT);
+        panel.add(address);
+        panel.add(address1);
+        range.setAlignmentX(JLabel.CENTER_ALIGNMENT);
+        scan.setAlignmentX(JLabel.CENTER_ALIGNMENT);
+        wide.setAlignmentX(JRadioButton.CENTER_ALIGNMENT);
+        narrow.setAlignmentX(JRadioButton.CENTER_ALIGNMENT);
+        on.setAlignmentX(JRadioButton.CENTER_ALIGNMENT);
+        off.setAlignmentX(JRadioButton.CENTER_ALIGNMENT);
+        air.setAlignmentX(JLabel.CENTER_ALIGNMENT);
+        yes.setAlignmentX(JRadioButton.CENTER_ALIGNMENT);
+        no.setAlignmentX(JRadioButton.CENTER_ALIGNMENT);
+        GoTime.setAlignmentX(JButton.CENTER_ALIGNMENT);
+        picLabel.setAlignmentX(JLabel.CENTER_ALIGNMENT);
+        //NOW WERE ADDING BUTTONS!!!!!!!!!!!!!!!!!!!!!!!!!!
+        panel.add(range);
+        panel.add(narrow);
+        panel.add(wide);
+        panel.add(scan);
+        panel.add(on);
+        panel.add(off);
+        panel.add(air);
+        panel.add(yes);
+        panel.add(no);
+        panel.add(GoTime);
+        panel.add(picLabel);
         paneltop.add(search);
-        
+
         //Adding Components to the frame.
-        //frame2.getContentPane().add(BorderLayout.NORTH, panel);
-    	//frame2.getContentPane().add(BorderLayout.CENTER, panel2);
-        frame.getContentPane().add(BorderLayout.NORTH, panel);
-        frame.getContentPane().add(BorderLayout.CENTER, panel1);
+        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+        frame.setBackground(Color.WHITE);
+        frame.getContentPane().add(panel);
         frame.setVisible(true);
     }
 }
