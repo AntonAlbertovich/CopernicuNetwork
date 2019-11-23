@@ -3,42 +3,18 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.image.BufferedImage;
 import java.net.*; 
 import java.io.*;
 import java.util.LinkedList;
 import java.util.List;
-import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.BoxLayout;
-import javax.swing.JOptionPane;
 import java.util.*;
-import static java.lang.System.out;
-import java.util.concurrent.Callable;
-import java.util.concurrent.FutureTask;
 import java.util.concurrent.TimeUnit;
 
 
 class gui{
 	static List<String> logged = new LinkedList<>();
-	private static void runProcess(String command) throws Exception {
-        Process pro = Runtime.getRuntime().exec(command);
-        printLines(command + " stdout:", pro.getInputStream());
-        printLines(command + " stderr:", pro.getErrorStream());
-        pro.waitFor();
-        System.out.println(command + " exitValue() " + pro.exitValue());
-      }
-	
-	private static void printLines(String cmd, InputStream ins) throws Exception {
-        String line = null;
-        BufferedReader in = new BufferedReader(
-            new InputStreamReader(ins));
-        while ((line = in.readLine()) != null) {
-            System.out.println(cmd + " " + line);
-            logged.add(cmd + " " + line);
-        }
-      }
-	
     public static void main(String args[])throws Exception {
     	//Creating the Frame
         JFrame frame = new JFrame("CopernicuNetwork");
@@ -46,7 +22,7 @@ class gui{
         frame2.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         frame2.setSize(500, 500);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(700, 800);
+        frame.setSize(700, 850);
         // Returns the instance of InetAddress containing 
         // local host name and address 
         InetAddress localhost = InetAddress.getLocalHost(); 
@@ -68,48 +44,73 @@ class gui{
             systemipaddress = "Cannot Execute Properly"; 
         }
        
-        NetworkInterface networky = NetworkInterface.getByInetAddress(localhost);
         
-        //BUTTON PANEL TIME!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        //BUTTON AND PANEL CREATION TIME!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         JPanel panel = new JPanel();
-        JPanel panel0 = new JPanel();
-        JPanel panel1 = new JPanel();
         JPanel panel2 = new JPanel();
         JPanel paneltop = new JPanel();
         JLabel range = new JLabel("Search range: ");
+        range.setFont(new Font("Modern No. 20", Font.PLAIN, 27));
         JRadioButton narrow = new JRadioButton("Narrow");
         JRadioButton wide = new JRadioButton("Wide");
         ButtonGroup sweep = new ButtonGroup();
+        wide.setFont(new Font("Modern No. 20", Font.PLAIN, 15));
+        narrow.setFont(new Font("Modern No. 20", Font.PLAIN, 15));
         sweep.add(narrow);
         sweep.add(wide);
-        JLabel scan = new JLabel("Port Scanning: ");
+        JLabel scan = new JLabel("Port scanning: ");
+        scan.setFont(new Font("Modern No. 20", Font.PLAIN, 27));
         JRadioButton on = new JRadioButton("On");
         JRadioButton off = new JRadioButton("Off");
+        on.setFont(new Font("Modern No. 20", Font.PLAIN, 15));
+        off.setFont(new Font("Modern No. 20", Font.PLAIN, 15));
         ButtonGroup port = new ButtonGroup();
         port.add(on);
         port.add(off);
         JLabel air = new JLabel("Air gap: ");
+        air.setFont(new Font("Modern No. 20", Font.PLAIN, 27));
+        
         JRadioButton yes = new JRadioButton("On");
         JRadioButton no = new JRadioButton("Off");
+        yes.setFont(new Font("Modern No. 20", Font.PLAIN, 15));
+        no.setFont(new Font("Modern No. 20", Font.PLAIN, 15));
         ButtonGroup gap = new ButtonGroup();
         gap.add(no);
         gap.add(yes);
         JButton GoTime = new JButton("Search");
         JLabel search = new JLabel("Search Complete");
-        search.setFont(new Font("Serif", Font.PLAIN, 36));
+        search.setFont(new Font("Modern No. 20", Font.PLAIN, 36));
         JLabel picLabel = new JLabel(new ImageIcon("src//tel.png"));
-        final int air_gap_flag = 1;
-        final int port_scan_flag = 1;
-        final int focused_sweep = 1;
         
+        //RADIO BUTTON ACTIONS!!!!!!!!!!!!!
+     
         
-        
-        //FIPS action
+        //IT'S GO TIME BABY!!!!!!!!!!!
         GoTime.addActionListener(new ActionListener() {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-
+            	
+            	int air_gap_flag;
+                int port_scan_flag;
+                int focused_sweep;
+              //RADIO BUTTON ACTIONS!!!!!!!!!!!!!
+            	   if(on.isSelected()) {port_scan_flag = 1; }
+                   else {port_scan_flag = 0;}
+                   if(yes.isSelected()) {air_gap_flag = 1;}
+                   else {air_gap_flag = 0;}
+                   if(narrow.isSelected()) {focused_sweep = 1;}
+                   else {focused_sweep = 0;}
+                   
+                   if(off.isSelected()) {port_scan_flag = 0; }
+                   
+                   if(no.isSelected()) {air_gap_flag = 0;}
+                   
+                   if(wide.isSelected()) {focused_sweep = 0;}
+                   
+                   System.out.println(air_gap_flag + "    ");
+                   System.out.print(port_scan_flag + "    ");
+                   System.out.print(focused_sweep + "    ");
             	Multithread a = new Multithread();
             	List<List<String>> logged = new LinkedList<>();
 		
@@ -137,7 +138,7 @@ class gui{
 		// Intended for single class A networks. 
 
 		
-
+            	
 		logged = a.search(air_gap_flag, port_scan_flag, focused_sweep);
 		
 
@@ -159,9 +160,11 @@ class gui{
         //IP address labels
         JLabel address = new JLabel("Public IP Address is: " + systemipaddress);
         address.setAlignmentX(JLabel.CENTER_ALIGNMENT);
+        address.setFont(new Font("Modern No. 20", Font.PLAIN, 17));
         JLabel address1 = new JLabel("System IP Address is: " + localhost.getHostAddress());
         //FORMATTING FORMATTING FORMATTING FORMATTING FORMATTING FORMATTING 
         address1.setAlignmentX(JLabel.CENTER_ALIGNMENT);
+        address1.setFont(new Font("Modern No. 20", Font.PLAIN, 17));
         panel.add(address);
         panel.add(address1);
         range.setAlignmentX(JLabel.CENTER_ALIGNMENT);
@@ -199,14 +202,13 @@ class gui{
 
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//   ______                                 __               .__                     _________ .__  .__  _____  _____  ___.                                        .__  .__  __          
-//  \      \   ______  _  __   ____   _____/  |_  ___________|__| ____    ____   /\  \_   ___ \|  | |__|/ ____\/ ____\ \_ |__ _____ _______  _______   ____ _____  |  | |__|/  |_ ___.__.
-//  /   |   \ /  _ \ \/ \/ / _/ __ \ /    \   __\/ __ \_  __ \  |/    \  / ___\  \/  /    \  \/|  | |  \   __\\   __\   | __ \\__  \\_  __ \ \_  __ \_/ __ \\__  \ |  | |  \   __<   |  |
-// /    |    (  <_> )     /  \  ___/|   |  \  | \  ___/|  | \/  |   |  \/ /_/  > /\  \     \___|  |_|  ||  |   |  |     | \_\ \/ __ \|  | \/  |  | \/\  ___/ / __ \|  |_|  ||  |  \___  |
-// \____|__  /\____/ \/\_/    \___  >___|  /__|  \___  >__|  |__|___|  /\___  /  \/   \______  /____/__||__|   |__|     |___  (____  /__|     |__|    \___  >____  /____/__||__|  / ____|
-//        \/                     \/     \/          \/              \//_____/               \/                             \/     \/                     \/     \/               \/     
+//   ______                                 __               .__                     _________ .__  .__  _____  ___.                                        .__  .__  __          
+//  \      \   ______  _  __   ____   _____/  |_  ___________|__| ____    ____   /\  \_   ___ \|  | |__|/ ____\ \_ |__ _____ _______  _______   ____ _____  |  | |__|/  |_ ___.__.
+//  /   |   \ /  _ \ \/ \/ / _/ __ \ /    \   __\/ __ \_  __ \  |/    \  / ___\  \/  /    \  \/|  | |  \   __\   | __ \\__  \\_  __ \ \_  __ \_/ __ \\__  \ |  | |  \   __<   |  |
+// /    |    (  <_> )     /  \  ___/|   |  \  | \  ___/|  | \/  |   |  \/ /_/  > /\  \     \___|  |_|  ||  |     | \_\ \/ __ \|  | \/  |  | \/\  ___/ / __ \|  |_|  ||  |  \___  |
+// \____|__  /\____/ \/\_/    \___  >___|  /__|  \___  >__|  |__|___|  /\___  /  \/   \______  /____/__||__|     |___  (____  /__|     |__|    \___  >____  /____/__||__|  / ____|
+//        \/                     \/     \/          \/              \//_____/               \/                       \/     \/                     \/     \/               \/     
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 
 
 class Multithread {
