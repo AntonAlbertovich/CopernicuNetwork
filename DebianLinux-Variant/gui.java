@@ -16,6 +16,10 @@ import static java.lang.System.out;
 import java.util.concurrent.Callable;
 import java.util.concurrent.FutureTask;
 import java.util.concurrent.TimeUnit;
+import java.text.SimpleDateFormat;  
+import java.util.Date;
+import java.io.FileWriter;
+import java.io.IOException;
 
 class gui{
         static List<String> logged = new LinkedList<>();
@@ -82,7 +86,8 @@ class gui{
         gap.add(no);
         gap.add(yes);
         JButton GoTime = new JButton("Search");
-        JLabel search = new JLabel("Search Complete");
+        JButton GoDog = new JButton("Search & Enter WatchDog Mode");
+	JLabel search = new JLabel("Search Complete");
         search.setFont(new Font("Modern No. 20", Font.PLAIN, 36));
         JLabel picLabel = new JLabel(new ImageIcon("tel.png"));
 
@@ -142,16 +147,111 @@ class gui{
                 // Intended for single class A networks. 
 
 
+		String timeStamp = new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss").format(new Date());
+		timeStamp = "CopernicuLog_" + timeStamp + ".txt";
+		System.out.print("!!! \n");
 
-                logged = a.search(air_gap_flag, port_scan_flag, focused_sweep);
+
+		logged = a.search(air_gap_flag, port_scan_flag, focused_sweep);
+                System.out.print("AND DONE! \n");
+		try{
+			FileWriter writer = new FileWriter(timeStamp, true);
+			for (List<String> member : logged){
+				for (String sub_member: member){
+
+					writer.write(sub_member + " ");
+				}
+				writer.write("\r\n");
+			}
+			writer.close();		
+		}catch (IOException we) {
+			System.out.print("!!! \n");
+        	    we.printStackTrace();
+	        }
+		int number_of_results = logged.size();
+
+                        JLabel picLabel = new JLabel(new ImageIcon("sat.png"));
+                                panel2.add(picLabel);
+                                frame2.getContentPane().add(BorderLayout.NORTH, paneltop);
+                frame2.getContentPane().add(BorderLayout.CENTER, panel2);
+                frame2.setVisible(true);
+            }
+        });
+
+        GoDog.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+                int air_gap_flag;
+                int port_scan_flag;
+                int focused_sweep;
+              //RADIO BUTTON ACTIONS!!!!!!!!!!!!!
+                   if(on.isSelected()) {port_scan_flag = 1; }
+                   else {port_scan_flag = 0;}
+                   if(yes.isSelected()) {air_gap_flag = 1;}
+                   else {air_gap_flag = 0;}
+                   if(narrow.isSelected()) {focused_sweep = 1;}
+                   else {focused_sweep = 0;}
+
+                   if(off.isSelected()) {port_scan_flag = 0; }
+
+                   if(no.isSelected()) {air_gap_flag = 0;}
+
+                   if(wide.isSelected()) {focused_sweep = 0;}
+
+                   System.out.println(air_gap_flag + "    ");
+                   System.out.print(port_scan_flag + "    ");
+                   System.out.print(focused_sweep + "    ");
+                Multithread a = new Multithread();
+                List<List<String>> logged = new LinkedList<>();
 
 
-                String somresult = "";
-                somresult = a.return_result();
+                //air_gap_flag
+
+                // If set to 1 this variable will force a check in with the internet to ensure that the host machine is connected to the internet.
+                // Set to 0 if the host machine is not connected to the internet. 
+
+                //port_scan_flag
+
+               // If set to 1 then every discoverd client on the host's network will have it's porst scanned. This will significantly increase run time.
+                // If set to 0 then ports will not be scanned. 
+
+                //focused_sweep
+
+                // If set to 1 then a narrow sweep will be conducted, searching the local IP addresses only directly neighboring the host machine's local address. 
+
+                // Example: If the host machine is at address 192.168.1.25 then a sweep will be conducted from 192.168.1.1 to 192.168.255.255. 
+                // Intended for contiguous class C networks. 
+
+                // If set to 0 then a full sweep will be conducted, searching all addresses on a network. 
+                // Example: If the host's machine is on 10.170.1.1 then a sweep will be conducted from 10.1.1.1 to 10.255.255.255. 
+
+                // Intended for single class A networks. 
+
+
+		String timeStamp = new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss").format(new Date());
+		timeStamp = "CopernicuLog_" + timeStamp + ".txt";
+                logged = a.watch_dog(air_gap_flag, port_scan_flag, focused_sweep);
+
+
                 System.out.print("AND DONE!");
+		try{
+			FileWriter writer = new FileWriter(timeStamp, true);
+			for (List<String> member : logged){
+				for (String sub_member: member){
 
-                System.out.print(logged);
-
+					writer.write(sub_member + " ");
+				}
+				writer.write("\r\n");
+			}
+			writer.close();		
+		}catch (IOException we) {
+			System.out.print("!!! \n");
+        	    we.printStackTrace();
+	        }
+		int number_of_results = logged.size();
+		int fail_flag = a.return_failure();
 
                         JLabel picLabel = new JLabel(new ImageIcon("sat.png"));
                                 panel2.add(picLabel);
@@ -181,7 +281,8 @@ class gui{
         yes.setAlignmentX(JRadioButton.CENTER_ALIGNMENT);
         no.setAlignmentX(JRadioButton.CENTER_ALIGNMENT);
         GoTime.setAlignmentX(JButton.CENTER_ALIGNMENT);
-        picLabel.setAlignmentX(JLabel.CENTER_ALIGNMENT);
+        GoDog.setAlignmentX(JButton.CENTER_ALIGNMENT);
+	picLabel.setAlignmentX(JLabel.CENTER_ALIGNMENT);
         //NOW WERE ADDING BUTTONS!!!!!!!!!!!!!!!!!!!!!!!!!!
         panel.add(range);
         panel.add(narrow);
@@ -193,6 +294,7 @@ class gui{
         panel.add(yes);
         panel.add(no);
         panel.add(GoTime);
+        panel.add(GoDog);
         panel.add(picLabel);
         paneltop.add(search);
 
@@ -217,7 +319,11 @@ class gui{
 
 
 class Multithread {
-	 public static String displayInterfaceInformation(NetworkInterface netint){
+
+	public int all_threads_complete_flag = 0;
+	public int total_network_failure = 0;
+	public int total_failure = 0;    
+	public static String displayInterfaceInformation(NetworkInterface netint){
 
         try {
                 Enumeration<InetAddress> inetAddresses = netint.getInetAddresses();
@@ -305,10 +411,93 @@ class Multithread {
 		    
 		    // Here we check the network health. 
 		    
+		    while(aa != 1){ 
+			    if(air_gap_flag == 0){
+					String network_health = "";
+					try{
+					    URL url_name = new URL("https://www.youtube.com");
+
+
+					    // reads system IPAddress 
+					}
+					catch (Exception e)
+
+					{
+					    network_health = "Cannot Execute Properly";
+					    break;
+					}
+				System.out.print(network_health);	
+				}			    
+			try{
+				TimeUnit.SECONDS.sleep(5);
+				}
+			catch(InterruptedException e){
+				System.out.println("Caught in main."); 
+				}
+			aa = randomNumberTasks[i].is_done();
+		    }
+				
+		List<List<String>> xx = new LinkedList<>();
+		xx = randomNumberTasks[i].return_deep_result();
+		result_data.addAll(xx);
+	    }
+	
+	all_threads_complete_flag = 1;    
+	return result_data;
+	    
+    }
+
+    public int return_failure(){
+    	return total_failure;	
+    }
+
+    public List<List<String>> watch_dog(int air_gap_flag, int port_scan_flag, int sweep_flag){  
+    	String ip = address();
+    	String[] nums = ip.split("\\.");
+	int cores = Runtime.getRuntime().availableProcessors();
+	Multithreading_ping[] randomNumberTasks = new Multithreading_ping[cores+1];
+	List<List<String>> result_data = new LinkedList<>();
+	List<List<String>> log_data = new LinkedList<>();
+	try {
+                Enumeration<NetworkInterface> nets = NetworkInterface.getNetworkInterfaces();
+                String str = "";
+                for (NetworkInterface netint : Collections.list(nets)){
+                    str = displayInterfaceInformation(netint);
+                    break;
+                }
+		nums = str.split("\\.");
+                out.printf(str);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+	int first = Integer.parseInt(nums[0]);
+    	int second = Integer.parseInt(nums[1]);
+	    // The cores are counted here
+	    for (int i=1; i<cores+1; i++){
+		    //Here each interation of the for loop opens up a new thread
+		    randomNumberTasks[i] = new Multithreading_ping(first, second, i, cores, port_scan_flag, sweep_flag);
+		    Thread t = new Thread(randomNumberTasks[i]);
+		    t.start();
+		    //Runnable r = new Multithreading_ping(first, second, i, cores);
+		    // The two inputs correspont to where the pings will start on the range of 1 to 255
+		    // A GUI implemented here could allow a user to pick here the range should start
+		    // All theads run at the same time.
+		    // A machine with 8 cores will run 8 threads
+		    // A machine with 6 cores will run 6 threads
+		    //new Thread(r).start(); 
+	    }
+	    for (int i = 1; i < cores+1; i++){
+		    int aa = 0;
+
+		    aa = randomNumberTasks[i].is_done();
+		    
+		    // Here we check the network health. 
+		    
 		    while(aa != 1){
 			    
-			    if(air_gap_flag == 1){
-					String network_health = "OK \n";
+			    if(air_gap_flag == 0){
+					String network_health = "";
 					try{
 					    URL url_name = new URL("https://www.youtube.com");
 
@@ -335,11 +524,86 @@ class Multithread {
 		xx = randomNumberTasks[i].return_deep_result();
 		result_data.addAll(xx);
 	    }
-	return result_data;
-	    
-    }
-    public String return_result(){
-	return "Search is Complete";
+	
+
+	
+	for(int i=0; i <= 5; i++){
+		System.out.print("----------------------------------------------------------------------------\n");
+		List<List<String>> update_data = new LinkedList<>();
+
+		for (List<String> member : result_data){
+			if(total_failure == 1){
+				System.out.print("Network Lost. \n");
+				return log_data;
+				}	
+			for (String sub_member: member){
+			List<String> log_part = new LinkedList<>();
+
+			
+			try {
+				InetAddress inet = InetAddress.getByName(sub_member);
+				if (inet.isReachable(5000)) {
+ 					String timeStamp = new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss").format(new Date());
+					System.out.print("Conection confirmed: "+sub_member+"\n");
+					log_part.add("Conection OK: "+sub_member+" Time:"+timeStamp+"\n");
+					update_data.add(member);
+					}
+				else{
+
+ 					String timeStamp = new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss").format(new Date());
+					System.out.print("!!! NETWOKR ERROR !!! ------- "+sub_member+"\n");
+					log_part.add("!!! WARNING !!! The conection to: "+sub_member+" was lost at time:" + timeStamp+"\n");
+					String incident_time = new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss").format(new Date());
+					timeStamp = "CopernicuLog_INCIDENT_REPORT_" + timeStamp + ".txt";
+					if(air_gap_flag == 0){
+						String systemipaddress = "";
+						try
+						{
+						    URL url_name = new URL("http://bot.whatismyipaddress.com");
+
+						    BufferedReader sc =
+						    new BufferedReader(new InputStreamReader(url_name.openStream()));
+
+						    // reads system IPAddress 
+						    systemipaddress = sc.readLine().trim();
+						}
+						catch (Exception e)
+
+						{
+						    systemipaddress = "Cannot Execute Properly";
+						    total_failure = 1;
+						}
+					}
+
+					try{
+						FileWriter incident_writer = new FileWriter(timeStamp, true);
+						incident_writer.write("The conection to: "+sub_member+" was lost at time:" + timeStamp+"\n");
+						incident_writer.write("\r\n");
+						incident_writer.close();		
+					}catch (IOException we) {
+						System.out.print("!!! \n");
+					    we.printStackTrace();
+					}
+					TimeUnit.SECONDS.sleep(3);
+					}
+				} catch (Exception e) {}
+				log_data.add(log_part);
+				break;
+			}
+		}
+		result_data = update_data;
+	
+	if(total_failure == 1){
+		break;
+		}	
+	try{
+		TimeUnit.SECONDS.sleep(15);
+		}catch(InterruptedException e){
+		System.out.println("Caught in main."); 
+		}
+	}
+	return log_data;
+	
     }
 }
 class Multithreading_ping implements Runnable { 
@@ -393,10 +657,7 @@ class Multithreading_ping implements Runnable {
 								String hostname = inet.getHostName();
 
 								// If the address is found to be recieving a ping the here a print statement will show the address pinged
-								
-
 								System.out.println("Found: " + s_part1 +"." +s_part2+"."+s_part3+"."+ s_part4);
-								
 								sub_log.add(s_part1 +"." +s_part2+"."+s_part3+"."+ s_part4);
 								if (scan_flag == 1){
 									for (int port = 1; port <= 15535; port++) {
@@ -407,29 +668,19 @@ class Multithreading_ping implements Runnable {
 										System.out.println("Port " + port + " is open on "+ s_part1 +"." +s_part2+"."+s_part3+"."+ s_part4 + " on Host Name: " + hostname);
 										String a_port = "";
 										a_port = Integer.toString(port);
+										a_port = "Port "+ a_port;
 										sub_log.add(a_port);
-										
 
 									}catch (Exception ex) {
-										
 										}
-
 									}
 								}
 								logged.add(sub_log);
-
 							}
-							
-							
-
 							} catch (Exception e) {}
-
-						
 						}
-					
 					}
 			complete_flag = 1; 
-						
 			} 
 			catch (Exception e){ 
 			    // Throwing an exception 	
@@ -462,8 +713,7 @@ class Multithreading_ping implements Runnable {
 										String hostname = inet.getHostName();
 
 										// If the address is found to be recieving a ping the here a print statement will show the address pinged
-										System.out.println("Found: " + s_part1 +"." +s_part2+"."+s_part3+"."+ s_part4);
-										
+                                                                		System.out.println("Found: " + s_part1 +"." +s_part2+"."+s_part3+"."+ s_part4);
 										sub_log.add(s_part1 +"." +s_part2+"."+s_part3+"."+ s_part4);
 										if (scan_flag == 1){
 											for (int port = 1; port <= 15535; port++) {
@@ -474,17 +724,15 @@ class Multithreading_ping implements Runnable {
 												System.out.println("Port " + port + " is open on "+ s_part1 +"." +s_part2+"."+s_part3+"."+ s_part4 + " on Host Name: " + hostname);
 												String a_port = "";
 												a_port = Integer.toString(port);
+												a_port = "Port "+ a_port;
+												System.out.println(a_port);
 												sub_log.add(a_port);
 												
-
 											}catch (Exception ex) {
-												
 												}
-
 											}
 										}
 										logged.add(sub_log);
-
 									}
 									} catch (Exception e) {}
 								}
@@ -492,7 +740,6 @@ class Multithreading_ping implements Runnable {
 						}
 					//}
 			complete_flag = 1; 
-						
 			} 
 			catch (Exception e){ 
 			    // Throwing an exception 	
