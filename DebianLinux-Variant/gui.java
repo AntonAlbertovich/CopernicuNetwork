@@ -28,9 +28,9 @@ class gui{
         JFrame frame = new JFrame("CopernicuNetwork");
         JFrame frame2 = new JFrame("Ping Search");
         frame2.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        frame2.setSize(500, 500);
+        frame2.setSize(700, 750);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(700, 850);
+        frame.setSize(700,950);
         // Returns the instance of InetAddress containing 
         // local host name and address 
         InetAddress localhost = InetAddress.getLocalHost();
@@ -57,6 +57,7 @@ class gui{
         JPanel panel = new JPanel();
         JPanel panel2 = new JPanel();
         JPanel paneltop = new JPanel();
+        JPanel panelbottom = new JPanel();
         JLabel range = new JLabel("Search range: ");
         range.setFont(new Font("Modern No. 20", Font.PLAIN, 27));
         JRadioButton narrow = new JRadioButton("Narrow");
@@ -75,7 +76,7 @@ class gui{
         ButtonGroup port = new ButtonGroup();
         port.add(on);
         port.add(off);
-        JLabel air = new JLabel("Air gap: ");
+	JLabel air = new JLabel("Air gap: ");
         air.setFont(new Font("Modern No. 20", Font.PLAIN, 27));
 
         JRadioButton yes = new JRadioButton("On");
@@ -86,9 +87,12 @@ class gui{
         gap.add(no);
         gap.add(yes);
         JButton GoTime = new JButton("Search");
-        JButton GoDog = new JButton("Search & Enter WatchDog Mode");
-	JLabel search = new JLabel("Search Complete");
+
+        JLabel search = new JLabel("Search Complete");
         search.setFont(new Font("Modern No. 20", Font.PLAIN, 36));
+        JLabel fail = new JLabel("Network Error");
+        fail.setFont(new Font("Modern No. 20", Font.PLAIN, 36));
+        JButton GoDog = new JButton("Search & Enter WatchDog Mode");
         JLabel picLabel = new JLabel(new ImageIcon("tel.png"));
 
         //RADIO BUTTON ACTIONS!!!!!!!!!!!!!
@@ -96,6 +100,7 @@ class gui{
 
         //IT'S GO TIME BABY!!!!!!!!!!!
         GoTime.addActionListener(new ActionListener() {
+
 
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -108,8 +113,8 @@ class gui{
                    else {port_scan_flag = 0;}
                    if(yes.isSelected()) {air_gap_flag = 1;}
                    else {air_gap_flag = 0;}
-                   if(narrow.isSelected()) {focused_sweep = 1;}
-                   else {focused_sweep = 0;}
+                   if(narrow.isSelected()) {focused_sweep = 1; JOptionPane.showMessageDialog(null, "Search is underway. This will take several minutes.");}
+                   else {focused_sweep = 0;JOptionPane.showMessageDialog(null, "Search is underway. This will take several hours.");}
 
                    if(off.isSelected()) {port_scan_flag = 0; }
 
@@ -125,8 +130,7 @@ class gui{
 
 
                 //air_gap_flag
-
-                // If set to 1 this variable will force a check in with the internet to ensure that the host machine is connected to the internet.
+               // If set to 1 this variable will force a check in with the internet to ensure that the host machine is connected to the internet.
                 // Set to 0 if the host machine is not connected to the internet. 
 
                 //port_scan_flag
@@ -147,30 +151,35 @@ class gui{
                 // Intended for single class A networks. 
 
 
-		String timeStamp = new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss").format(new Date());
-		timeStamp = "CopernicuLog_" + timeStamp + ".txt";
-		logged = a.search(air_gap_flag, port_scan_flag, focused_sweep);
+                String timeStamp = new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss").format(new Date());
+                timeStamp = "CopernicuLog_" + timeStamp + ".txt";
+                logged = a.search(air_gap_flag, port_scan_flag, focused_sweep);
                 System.out.print("AND DONE! \n");
-		try{
-			FileWriter writer = new FileWriter(timeStamp, true);
-			for (List<String> member : logged){
-				for (String sub_member: member){
+                try{
+                        FileWriter writer = new FileWriter(timeStamp, true);
+                        for (List<String> member : logged){
+                                for (String sub_member: member){
 
-					writer.write(sub_member + " ");
-				}
-				writer.write("\r\n");
-			}
-			writer.close();		
-		}catch (IOException we) {
-			System.out.print("!!! \n");
-        	    we.printStackTrace();
-	        }
-		int number_of_results = logged.size();
+                                        writer.write(sub_member + " ");
+                                }
+                                writer.write("\r\n");
+                        }
+                        writer.close();
+                }catch (IOException we) {
+                        System.out.print("!!! \n");
+                    we.printStackTrace();
+                }
+                int number_of_results = logged.size();
+                JLabel log = new JLabel(number_of_results+" devices found. A log file has been created called " + timeStamp);
+                log.setFont(new Font("Modern No. 20", Font.PLAIN, 17));
 
                         JLabel picLabel = new JLabel(new ImageIcon("sat.png"));
+                                        paneltop.add(search);
                                 panel2.add(picLabel);
+                                panelbottom.add(log);
                                 frame2.getContentPane().add(BorderLayout.NORTH, paneltop);
                 frame2.getContentPane().add(BorderLayout.CENTER, panel2);
+                frame2.getContentPane().add(BorderLayout.SOUTH, panelbottom);
                 frame2.setVisible(true);
             }
         });
@@ -188,8 +197,8 @@ class gui{
                    else {port_scan_flag = 0;}
                    if(yes.isSelected()) {air_gap_flag = 1;}
                    else {air_gap_flag = 0;}
-                   if(narrow.isSelected()) {focused_sweep = 1;}
-                   else {focused_sweep = 0;}
+                   if(narrow.isSelected()) {focused_sweep = 1; JOptionPane.showMessageDialog(null, "Search is underway. This will take several minutes.");}
+                   else {focused_sweep = 0;JOptionPane.showMessageDialog(null, "Search is underway. This will take several hours.");}
 
                    if(off.isSelected()) {port_scan_flag = 0; }
 
@@ -220,41 +229,46 @@ class gui{
 
                 // Example: If the host machine is at address 192.168.1.25 then a sweep will be conducted from 192.168.1.1 to 192.168.255.255. 
                 // Intended for contiguous class C networks. 
-
-                // If set to 0 then a full sweep will be conducted, searching all addresses on a network. 
+               // If set to 0 then a full sweep will be conducted, searching all addresses on a network. 
                 // Example: If the host's machine is on 10.170.1.1 then a sweep will be conducted from 10.1.1.1 to 10.255.255.255. 
 
                 // Intended for single class A networks. 
 
 
-		String timeStamp = new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss").format(new Date());
-		timeStamp = "CopernicuLog_" + timeStamp + ".txt";
+                String timeStamp = new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss").format(new Date());
+                timeStamp = "CopernicuLog_" + timeStamp + ".txt";
                 logged = a.watch_dog(air_gap_flag, port_scan_flag, focused_sweep);
-		int failure_flag = a.return_failure();
+                int failure_flag = a.return_failure();
 
                 System.out.print("AND DONE!");
-		System.out.print(failure_flag);
-		System.out.print("\n");
-		try{
-			FileWriter writer = new FileWriter(timeStamp, true);
-			for (List<String> member : logged){
-				for (String sub_member: member){
+                System.out.print(failure_flag);
+                System.out.print("\n");
+                try{
+                        FileWriter writer = new FileWriter(timeStamp, true);
+                        for (List<String> member : logged){
+                                for (String sub_member: member){
 
-					writer.write(sub_member + " ");
-				}
-				writer.write("\r\n");
-			}
-			writer.close();		
-		}catch (IOException we) {
-        	    we.printStackTrace();
-	        }
-		int number_of_results = logged.size();
-		int fail_flag = a.return_failure();
-
-                        JLabel picLabel = new JLabel(new ImageIcon("sat.png"));
+                                        writer.write(sub_member + " ");
+                                }
+                                writer.write("\r\n");
+                        }
+                        writer.close();
+                }catch (IOException we) {
+                    we.printStackTrace();
+                }
+                int number_of_results = logged.size();
+                int fail_flag = a.return_failure();
+                JLabel picLabel = new JLabel();
+                JLabel log = new JLabel(number_of_results+" devices found. A log file has been created called " + timeStamp);
+                JLabel error = new JLabel("Connection interrupted. Please check your connection to the network and try again.");
+                log.setFont(new Font("Modern No. 20", Font.PLAIN, 17));
+                error.setFont(new Font("Modern No. 20", Font.PLAIN, 17));
+                                                if(fail_flag == 0) {picLabel = new JLabel(new ImageIcon("dog.png")); panelbottom.add(log); paneltop.add(search);}
+                                                else {picLabel = new JLabel(new ImageIcon("met.png")); panel2.add(fail); panelbottom.add(error);}
                                 panel2.add(picLabel);
                                 frame2.getContentPane().add(BorderLayout.NORTH, paneltop);
                 frame2.getContentPane().add(BorderLayout.CENTER, panel2);
+                frame2.getContentPane().add(BorderLayout.SOUTH, panelbottom);
                 frame2.setVisible(true);
             }
         });
@@ -280,7 +294,7 @@ class gui{
         no.setAlignmentX(JRadioButton.CENTER_ALIGNMENT);
         GoTime.setAlignmentX(JButton.CENTER_ALIGNMENT);
         GoDog.setAlignmentX(JButton.CENTER_ALIGNMENT);
-	picLabel.setAlignmentX(JLabel.CENTER_ALIGNMENT);
+        picLabel.setAlignmentX(JLabel.CENTER_ALIGNMENT);
         //NOW WERE ADDING BUTTONS!!!!!!!!!!!!!!!!!!!!!!!!!!
         panel.add(range);
         panel.add(narrow);
@@ -292,9 +306,10 @@ class gui{
         panel.add(yes);
         panel.add(no);
         panel.add(GoTime);
+        //panel.add(Box.createRigidArea(new Dimension(10, 20)));
         panel.add(GoDog);
+        //panel.add(Box.createRigidArea(new Dimension(10, 20)));
         panel.add(picLabel);
-        paneltop.add(search);
 
         //Adding Components to the frame.
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
@@ -305,14 +320,17 @@ class gui{
 }
 
 
+
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//   ______                                 __               .__                     _________ .__  .__  _____  _____  ___.                                        .__  .__  __          
-//  \      \   ______  _  __   ____   _____/  |_  ___________|__| ____    ____   /\  \_   ___ \|  | |__|/ ____\/ ____\ \_ |__ _____ _______  _______   ____ _____  |  | |__|/  |_ ___.__.
-//  /   |   \ /  _ \ \/ \/ / _/ __ \ /    \   __\/ __ \_  __ \  |/    \  / ___\  \/  /    \  \/|  | |  \   __\\   __\   | __ \\__  \\_  __ \ \_  __ \_/ __ \\__  \ |  | |  \   __<   |  |
-// /    |    (  <_> )     /  \  ___/|   |  \  | \  ___/|  | \/  |   |  \/ /_/  > /\  \     \___|  |_|  ||  |   |  |     | \_\ \/ __ \|  | \/  |  | \/\  ___/ / __ \|  |_|  ||  |  \___  |
-// \____|__  /\____/ \/\_/    \___  >___|  /__|  \___  >__|  |__|___|  /\___  /  \/   \______  /____/__||__|   |__|     |___  (____  /__|     |__|    \___  >____  /____/__||__|  / ____|
-//        \/                     \/     \/          \/              \//_____/               \/                             \/     \/                     \/     \/               \/     
+//   ______                                 __               .__                     _________ .__  .__  _____  ___.                                        .__  .__  __
+//  \      \   ______  _  __   ____   _____/  |_  ___________|__| ____    ____   /\  \_   ___ \|  | |__|/ ____\ \_ |__ _____ _______  _______   ____ _____  |  | |__|/  |_ ___.__.
+//  /   |   \ /  _ \ \/ \/ / _/ __ \ /    \   __\/ __ \_  __ \  |/    \  / ___\  \/  /    \  \/|  | |  \   __\   | __ \\__  \\_  __ \ \_  __ \_/ __ \\__  \ |  | |  \   __<   |  |
+// /    |    (  <_> )     /  \  ___/|   |  \  | \  ___/|  | \/  |   |  \/ /_/  > /\  \     \___|  |_|  ||  |     | \_\ \/ __ \|  | \/  |  | \/\  ___/ / __ \|  |_|  ||  |  \___  |
+// \____|__  /\____/ \/\_/    \___  >___|  /__|  \___  >__|  |__|___|  /\___  /  \/   \______  /____/__||__|     |___  (____  /__|     |__|    \___  >____  /____/__||__|  / ____|
+//        \/                     \/     \/          \/              \//_____/               \/                       \/     \/                     \/     \/               \/
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
 
 
 
