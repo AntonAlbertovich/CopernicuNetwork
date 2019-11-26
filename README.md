@@ -28,6 +28,7 @@ To see the complete project overview in a simple, easy-to-read PowerPoint, [clic
 ### Notes 
 
 Line 334 of gui.java for the MacOS Variant is hard-coded to look specifically for network device/interface that the Mac that this code was built on (en0), this may need to be changed based on your Mac machine. 
+
 The variable name is: networkID 
 
 ### Meet the team members! 
