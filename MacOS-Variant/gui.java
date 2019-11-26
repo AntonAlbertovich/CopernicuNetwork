@@ -87,7 +87,7 @@ class gui{
         JLabel fail = new JLabel("Network Error");
         fail.setFont(new Font("Modern No. 20", Font.PLAIN, 36));
         JButton GoDog = new JButton("Search & Enter WatchDog Mode");
-        JLabel picLabel = new JLabel(new ImageIcon("src//tel.png"));
+        JLabel picLabel = new JLabel(new ImageIcon("tel.png"));
         
         //RADIO BUTTON ACTIONS!!!!!!!!!!!!!
      
@@ -168,7 +168,7 @@ class gui{
 		JLabel log = new JLabel(number_of_results+" devices found. A log file has been created called " + timeStamp);
 		log.setFont(new Font("Modern No. 20", Font.PLAIN, 17));
 
-                        JLabel picLabel = new JLabel(new ImageIcon("src//sat.png"));
+                        JLabel picLabel = new JLabel(new ImageIcon("sat.png"));
                         		paneltop.add(search);
                                 panel2.add(picLabel);
                                 panelbottom.add(log);
@@ -259,8 +259,8 @@ class gui{
 		JLabel error = new JLabel("Connection interrupted. Please check your connection to the network and try again.");
 		log.setFont(new Font("Modern No. 20", Font.PLAIN, 17));
 		error.setFont(new Font("Modern No. 20", Font.PLAIN, 17));
-						if(fail_flag == 0) {picLabel = new JLabel(new ImageIcon("src//dog.png")); panelbottom.add(log); paneltop.add(search);}
-						else {picLabel = new JLabel(new ImageIcon("src//met.png")); panel2.add(fail); panelbottom.add(error);}
+						if(fail_flag == 0) {picLabel = new JLabel(new ImageIcon("dog.png")); panelbottom.add(log); paneltop.add(search);}
+						else {picLabel = new JLabel(new ImageIcon("met.png")); panel2.add(fail); panelbottom.add(error);}
                                 panel2.add(picLabel);
                                 frame2.getContentPane().add(BorderLayout.NORTH, paneltop);
                 frame2.getContentPane().add(BorderLayout.CENTER, panel2);
@@ -382,10 +382,12 @@ class Multithread {
                 String str = "";
                 String full_stop = ""; 
                 for (NetworkInterface netint : Collections.list(nets)){
-                     
+                     //The code here changes for MacOS to work 
                     full_stop = netint.getDisplayName(); 
-                    System.out.println("!"); 
                     if (full_stop.equals("en0")) {
+                        //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                        //en0 was hard-coded for the Mac that created this software, it will vary based on machine 
+                        //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
                         str = displayInterfaceInformation(netint);
                         System.out.println(str); 
                         break; 
