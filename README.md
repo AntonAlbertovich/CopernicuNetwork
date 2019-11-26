@@ -25,6 +25,10 @@ This project was founded utilizing two computer science principles: [Network map
 
 To see the complete project overview in a simple, easy-to-read PowerPoint, [click here](https://texastechuniversity-my.sharepoint.com/:p:/g/personal/aaron_arnold_ttu_edu/EQhELVO1D5ZHjtniTN4jFUQBZgBs5xWH_UXHiriNtAvHDg?e=cXcuaJ). 
 
+### Notes 
+
+Line 387 of gui.java for the MacOS Variant is hard-coded to look specifically for network device/interface that the Mac that this code was built on (en0), this may change based on your Mac machine. 
+
 ### Meet the team members! 
 
 Following this statement each team member's name and link to personal GitHub are available. 
