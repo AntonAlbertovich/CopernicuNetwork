@@ -15,6 +15,7 @@ import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 
+
 class gui{
 	static List<String> logged = new LinkedList<>();
     public static void main(String args[])throws Exception {
@@ -329,6 +330,9 @@ class gui{
 
 class Multithread {
 
+     //networkIdentifier for Mac, please input the network identifier your Mac is using 
+    String networkID = "en0"; 
+
 	public int all_threads_complete_flag = 0;
 	public int total_network_failure = 0;
 	public int total_failure = 0;    
@@ -384,7 +388,7 @@ class Multithread {
                 for (NetworkInterface netint : Collections.list(nets)){
                      //The code here changes for MacOS to work 
                     full_stop = netint.getDisplayName(); 
-                    if (full_stop.equals("en0")) {
+                    if (full_stop.equals(networkID)) {
                         //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
                         //en0 was hard-coded for the Mac that created this software, it will vary based on machine 
                         //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
