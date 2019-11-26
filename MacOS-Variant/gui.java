@@ -1,30 +1,24 @@
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.image.BufferedImage;
-import java.net.*; 
+import java.net.*;
+import java.text.SimpleDateFormat;
 import java.io.*;
 import java.util.LinkedList;
 import java.util.List;
-import javax.imageio.ImageIO;
 import javax.swing.*;
-import javax.swing.JOptionPane;
+import javax.swing.BoxLayout;
 import java.util.*;
-import static java.lang.System.out;
-import java.util.concurrent.Callable;
-import java.util.concurrent.FutureTask;
 import java.util.concurrent.TimeUnit;
-import java.text.SimpleDateFormat;  
-import java.util.Date;
-import java.io.FileWriter;
-import java.io.IOException;
+
 
 class gui{
-        static List<String> logged = new LinkedList<>();
+	static List<String> logged = new LinkedList<>();
     public static void main(String args[])throws Exception {
-        //Creating the Frame
+    	//Creating the Frame
         JFrame frame = new JFrame("CopernicuNetwork");
         JFrame frame2 = new JFrame("Ping Search");
         frame2.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -33,26 +27,26 @@ class gui{
         frame.setSize(700,950);
         // Returns the instance of InetAddress containing 
         // local host name and address 
-        InetAddress localhost = InetAddress.getLocalHost();
+        InetAddress localhost = InetAddress.getLocalHost(); 
         // Find public IP address 
-        String systemipaddress = "";
+        String systemipaddress = ""; 
         try
-        {
-            URL url_name = new URL("http://bot.whatismyipaddress.com");
-
-            BufferedReader sc =
-            new BufferedReader(new InputStreamReader(url_name.openStream()));
-
+        { 
+            URL url_name = new URL("http://bot.whatismyipaddress.com"); 
+  
+            BufferedReader sc = 
+            new BufferedReader(new InputStreamReader(url_name.openStream())); 
+  
             // reads system IPAddress 
-            systemipaddress = sc.readLine().trim();
+            systemipaddress = sc.readLine().trim(); 
+        } 
+        catch (Exception e) 
+        
+        { 
+            systemipaddress = "Cannot Execute Properly"; 
         }
-        catch (Exception e)
-
-        {
-            systemipaddress = "Cannot Execute Properly";
-        }
-
-
+       
+        
         //BUTTON AND PANEL CREATION TIME!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         JPanel panel = new JPanel();
         JPanel panel2 = new JPanel();
@@ -76,9 +70,9 @@ class gui{
         ButtonGroup port = new ButtonGroup();
         port.add(on);
         port.add(off);
-	JLabel air = new JLabel("Air gap: ");
+        JLabel air = new JLabel("Air gap: ");
         air.setFont(new Font("Modern No. 20", Font.PLAIN, 27));
-
+        
         JRadioButton yes = new JRadioButton("On");
         JRadioButton no = new JRadioButton("Off");
         yes.setFont(new Font("Modern No. 20", Font.PLAIN, 15));
@@ -87,24 +81,24 @@ class gui{
         gap.add(no);
         gap.add(yes);
         JButton GoTime = new JButton("Search");
-
+        
         JLabel search = new JLabel("Search Complete");
         search.setFont(new Font("Modern No. 20", Font.PLAIN, 36));
         JLabel fail = new JLabel("Network Error");
         fail.setFont(new Font("Modern No. 20", Font.PLAIN, 36));
         JButton GoDog = new JButton("Search & Enter WatchDog Mode");
-        JLabel picLabel = new JLabel(new ImageIcon("tel.png"));
-
+        JLabel picLabel = new JLabel(new ImageIcon("src//tel.png"));
+        
         //RADIO BUTTON ACTIONS!!!!!!!!!!!!!
-
-
+     
+        
         //IT'S GO TIME BABY!!!!!!!!!!!
         GoTime.addActionListener(new ActionListener() {
 
 
             @Override
             public void actionPerformed(ActionEvent e) {
-
+            	
                 int air_gap_flag;
                 int port_scan_flag;
                 int focused_sweep;
@@ -130,7 +124,8 @@ class gui{
 
 
                 //air_gap_flag
-               // If set to 1 this variable will force a check in with the internet to ensure that the host machine is connected to the internet.
+
+                // If set to 1 this variable will force a check in with the internet to ensure that the host machine is connected to the internet.
                 // Set to 0 if the host machine is not connected to the internet. 
 
                 //port_scan_flag
@@ -151,30 +146,30 @@ class gui{
                 // Intended for single class A networks. 
 
 
-                String timeStamp = new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss").format(new Date());
-                timeStamp = "CopernicuLog_" + timeStamp + ".txt";
-                logged = a.search(air_gap_flag, port_scan_flag, focused_sweep);
+		String timeStamp = new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss").format(new Date());
+		timeStamp = "CopernicuLog_" + timeStamp + ".txt";
+		logged = a.search(air_gap_flag, port_scan_flag, focused_sweep);
                 System.out.print("AND DONE! \n");
-                try{
-                        FileWriter writer = new FileWriter(timeStamp, true);
-                        for (List<String> member : logged){
-                                for (String sub_member: member){
+		try{
+			FileWriter writer = new FileWriter(timeStamp, true);
+			for (List<String> member : logged){
+				for (String sub_member: member){
 
-                                        writer.write(sub_member + " ");
-                                }
-                                writer.write("\r\n");
-                        }
-                        writer.close();
-                }catch (IOException we) {
-                        System.out.print("!!! \n");
-                    we.printStackTrace();
-                }
-                int number_of_results = logged.size();
-                JLabel log = new JLabel(number_of_results+" devices found. A log file has been created called " + timeStamp);
-                log.setFont(new Font("Modern No. 20", Font.PLAIN, 17));
+					writer.write(sub_member + " ");
+				}
+				writer.write("\r\n");
+			}
+			writer.close();		
+		}catch (IOException we) {
+			System.out.print("!!! \n");
+        	    we.printStackTrace();
+	        }
+		int number_of_results = logged.size();
+		JLabel log = new JLabel(number_of_results+" devices found. A log file has been created called " + timeStamp);
+		log.setFont(new Font("Modern No. 20", Font.PLAIN, 17));
 
-                        JLabel picLabel = new JLabel(new ImageIcon("sat.png"));
-                                        paneltop.add(search);
+                        JLabel picLabel = new JLabel(new ImageIcon("src//sat.png"));
+                        		paneltop.add(search);
                                 panel2.add(picLabel);
                                 panelbottom.add(log);
                                 frame2.getContentPane().add(BorderLayout.NORTH, paneltop);
@@ -183,7 +178,7 @@ class gui{
                 frame2.setVisible(true);
             }
         });
-
+        
         GoDog.addActionListener(new ActionListener() {
 
             @Override
@@ -229,42 +224,43 @@ class gui{
 
                 // Example: If the host machine is at address 192.168.1.25 then a sweep will be conducted from 192.168.1.1 to 192.168.255.255. 
                 // Intended for contiguous class C networks. 
-               // If set to 0 then a full sweep will be conducted, searching all addresses on a network. 
+
+                // If set to 0 then a full sweep will be conducted, searching all addresses on a network. 
                 // Example: If the host's machine is on 10.170.1.1 then a sweep will be conducted from 10.1.1.1 to 10.255.255.255. 
 
                 // Intended for single class A networks. 
 
 
-                String timeStamp = new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss").format(new Date());
-                timeStamp = "CopernicuLog_" + timeStamp + ".txt";
+		String timeStamp = new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss").format(new Date());
+		timeStamp = "CopernicuLog_" + timeStamp + ".txt";
                 logged = a.watch_dog(air_gap_flag, port_scan_flag, focused_sweep);
-                int failure_flag = a.return_failure();
+		int failure_flag = a.return_failure();
 
                 System.out.print("AND DONE!");
-                System.out.print(failure_flag);
-                System.out.print("\n");
-                try{
-                        FileWriter writer = new FileWriter(timeStamp, true);
-                        for (List<String> member : logged){
-                                for (String sub_member: member){
+		System.out.print(failure_flag);
+		System.out.print("\n");
+		try{
+			FileWriter writer = new FileWriter(timeStamp, true);
+			for (List<String> member : logged){
+				for (String sub_member: member){
 
-                                        writer.write(sub_member + " ");
-                                }
-                                writer.write("\r\n");
-                        }
-                        writer.close();
-                }catch (IOException we) {
-                    we.printStackTrace();
-                }
-                int number_of_results = logged.size();
-                int fail_flag = a.return_failure();
-                JLabel picLabel = new JLabel();
-                JLabel log = new JLabel(number_of_results+" devices found. A log file has been created called " + timeStamp);
-                JLabel error = new JLabel("Connection interrupted. Please check your connection to the network and try again.");
-                log.setFont(new Font("Modern No. 20", Font.PLAIN, 17));
-                error.setFont(new Font("Modern No. 20", Font.PLAIN, 17));
-                                                if(fail_flag == 0) {picLabel = new JLabel(new ImageIcon("dog.png")); panelbottom.add(log); paneltop.add(search);}
-                                                else {picLabel = new JLabel(new ImageIcon("met.png")); panel2.add(fail); panelbottom.add(error);}
+					writer.write(sub_member + " ");
+				}
+				writer.write("\r\n");
+			}
+			writer.close();		
+		}catch (IOException we) {
+        	    we.printStackTrace();
+	        }
+		int number_of_results = logged.size();
+		int fail_flag = a.return_failure();
+		JLabel picLabel = new JLabel();
+		JLabel log = new JLabel(number_of_results+" devices found. A log file has been created called " + timeStamp);
+		JLabel error = new JLabel("Connection interrupted. Please check your connection to the network and try again.");
+		log.setFont(new Font("Modern No. 20", Font.PLAIN, 17));
+		error.setFont(new Font("Modern No. 20", Font.PLAIN, 17));
+						if(fail_flag == 0) {picLabel = new JLabel(new ImageIcon("src//dog.png")); panelbottom.add(log); paneltop.add(search);}
+						else {picLabel = new JLabel(new ImageIcon("src//met.png")); panel2.add(fail); panelbottom.add(error);}
                                 panel2.add(picLabel);
                                 frame2.getContentPane().add(BorderLayout.NORTH, paneltop);
                 frame2.getContentPane().add(BorderLayout.CENTER, panel2);
@@ -272,7 +268,7 @@ class gui{
                 frame2.setVisible(true);
             }
         });
-
+              
         //IP address labels
         JLabel address = new JLabel("Public IP Address is: " + systemipaddress);
         address.setAlignmentX(JLabel.CENTER_ALIGNMENT);
@@ -306,11 +302,11 @@ class gui{
         panel.add(yes);
         panel.add(no);
         panel.add(GoTime);
-        //panel.add(Box.createRigidArea(new Dimension(10, 20)));
+        panel.add(Box.createRigidArea(new Dimension(10, 20)));
         panel.add(GoDog);
-        //panel.add(Box.createRigidArea(new Dimension(10, 20)));
+        panel.add(Box.createRigidArea(new Dimension(10, 20)));
         panel.add(picLabel);
-
+        
         //Adding Components to the frame.
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
         frame.setBackground(Color.WHITE);
@@ -320,17 +316,14 @@ class gui{
 }
 
 
-
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//   ______                                 __               .__                     _________ .__  .__  _____  ___.                                        .__  .__  __
+//   ______                                 __               .__                     _________ .__  .__  _____  ___.                                        .__  .__  __          
 //  \      \   ______  _  __   ____   _____/  |_  ___________|__| ____    ____   /\  \_   ___ \|  | |__|/ ____\ \_ |__ _____ _______  _______   ____ _____  |  | |__|/  |_ ___.__.
 //  /   |   \ /  _ \ \/ \/ / _/ __ \ /    \   __\/ __ \_  __ \  |/    \  / ___\  \/  /    \  \/|  | |  \   __\   | __ \\__  \\_  __ \ \_  __ \_/ __ \\__  \ |  | |  \   __<   |  |
 // /    |    (  <_> )     /  \  ___/|   |  \  | \  ___/|  | \/  |   |  \/ /_/  > /\  \     \___|  |_|  ||  |     | \_\ \/ __ \|  | \/  |  | \/\  ___/ / __ \|  |_|  ||  |  \___  |
 // \____|__  /\____/ \/\_/    \___  >___|  /__|  \___  >__|  |__|___|  /\___  /  \/   \______  /____/__||__|     |___  (____  /__|     |__|    \___  >____  /____/__||__|  / ____|
-//        \/                     \/     \/          \/              \//_____/               \/                       \/     \/                     \/     \/               \/
+//        \/                     \/     \/          \/              \//_____/               \/                       \/     \/                     \/     \/               \/     
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-
 
 
 
@@ -344,6 +337,7 @@ class Multithread {
         try {
                 Enumeration<InetAddress> inetAddresses = netint.getInetAddresses();
                 String returnout = "";
+                String fullstop = ""; 
                 for (InetAddress inetAddress : Collections.list(inetAddresses)) {
 
                     returnout = String.format("%s", inetAddress);
@@ -386,12 +380,19 @@ class Multithread {
 	try {
                 Enumeration<NetworkInterface> nets = NetworkInterface.getNetworkInterfaces();
                 String str = "";
+                String full_stop = ""; 
                 for (NetworkInterface netint : Collections.list(nets)){
-                    str = displayInterfaceInformation(netint);
-                    break;
+                     
+                    full_stop = netint.getDisplayName(); 
+                    System.out.println("!"); 
+                    if (full_stop.equals("en0")) {
+                        str = displayInterfaceInformation(netint);
+                        System.out.println(str); 
+                        break; 
+                    }
                 }
 		nums = str.split("\\.");
-                out.printf(str);
+                System.out.println(str);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -400,9 +401,12 @@ class Multithread {
 	
 	int first = Integer.parseInt(nums[0]);
     	int second = Integer.parseInt(nums[1]);
+    	cores = 1; 
+    	System.out.println("I got to cores"); 
 	    // The cores are counted here
 	    for (int i=1; i<cores+1; i++){
 		    //Here each interation of the for loop opens up a new thread
+		    System.out.println("Thread"); 
 		    randomNumberTasks[i] = new Multithreading_ping(first, second, i, cores, port_scan_flag, sweep_flag);
 		    Thread t = new Thread(randomNumberTasks[i]);
 		    t.start();
@@ -420,6 +424,7 @@ class Multithread {
 		    //new Thread(r).start(); 
 	    }
 
+        System.out.println("Exited thread start"); 
 	    for (int i = 1; i < cores+1; i++){
 		    int aa = 0;
 
@@ -485,7 +490,7 @@ class Multithread {
                     break;
                 }
 		nums = str.split("\\.");
-                out.printf(str);
+                System.out.printf(str);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -656,7 +661,7 @@ class Multithreading_ping implements Runnable {
 	List<List<String>> logged = new LinkedList<>();
 	int complete_flag = 0;
 	public void run() { 
-
+        System.out.println("Entered public void run"); 
 		if (network_flag == 1){	
 			try{
 				String s;
@@ -669,9 +674,9 @@ class Multithreading_ping implements Runnable {
 						String s_part2 = b_var +"";
 						String s_part3 = Integer.toString(c);
 						String s_part4 = Integer.toString(d);
-
+                        System.out.println("network_flag == 1"); 
 						String ipAddress = s_part1 +"."+ s_part2+"."+s_part3+"."+s_part4;
-						
+						System.out.println(ipAddress); 
 						try {
 							InetAddress inet = InetAddress.getByName(ipAddress);
 							if (inet.isReachable(5000)) {
@@ -683,6 +688,7 @@ class Multithreading_ping implements Runnable {
 								System.out.println("Found: " + s_part1 +"." +s_part2+"."+s_part3+"."+ s_part4);
 								sub_log.add(s_part1 +"." +s_part2+"."+s_part3+"."+ s_part4);
 								if (scan_flag == 1){
+								    System.out.println("Scan flag entered"); 
 									for (int port = 1; port <= 15535; port++) {
 									try{
 										Socket socket = new Socket();
