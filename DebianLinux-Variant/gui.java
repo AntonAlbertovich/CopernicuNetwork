@@ -550,7 +550,7 @@ class Multithread {
 	
 
 	
-	for(int i=0; i <= 5; i++){
+	for(int i=0; i <= 17280; i++){
 		System.out.print("----------------------------------------------------------------------------\n");
 		List<List<String>> update_data = new LinkedList<>();
 
