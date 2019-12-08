@@ -662,7 +662,7 @@ class Multithreading_ping implements Runnable {
 				String s;
 
 				String found = "Adresses discovered: \n";
-				for(int c=1;c<=1;c++){
+				for(int c=1;c<=255;c++){
 					for(int d=start_var;d<=255;d = d+ inc_var){
 
 						String s_part1 = a_var +""; //Integer.toString(a);
@@ -715,7 +715,7 @@ class Multithreading_ping implements Runnable {
 
 				String found = "Adresses discovered: \n";
 				//for(int a=a_var;a<=255;a++){
-					for(int b=b_var;b<=1;b++){
+					for(int b=b_var;b<=255;b++){
 						for(int c=1;c<=255;c++){
 							boolean valid_range = false;
 							for(int d=start_var;d<=255;d = d+ inc_var){
