@@ -16,7 +16,7 @@ import java.util.concurrent.TimeUnit;
 
 
 class gui{
-	static List<String> logged = new LinkedList<>();
+	
     public static void main(String args[])throws Exception {
     	//Creating the Frame
         JFrame frame = new JFrame("CopernicuNetwork");
