@@ -4,9 +4,9 @@ The goal of CopernicuNetwork is to enable Security Experts and IT Administrators
 
 This project is currently being worked on and we hope to deliver more updates in the future. However, this software is provided as-is and should only be used by those who fully understand the implications of this software. 
 
-## Attention
+## ATTENTION!
 
-The full version of CopernicuNetwork has several features with processes that take several days, and in  the case of a wide search several months. To test these features on your network in an abridged period of time we suggest using our v1.0-D release.
+The full v1.0 release of CopernicuNetwork has several features with processes that take several days, and in  the case of a wide search several months. To test these features on your network in an abridged period of time we suggest using our v1.0-D release.
 
 WatchDog mode lasts for 72 hours in the v1.0 release. In v1.0-D it lasts about 80 seconds. Both times do not include the time necessary to search a network
 
